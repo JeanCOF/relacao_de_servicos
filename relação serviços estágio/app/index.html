@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sistema de Chamados - UNIFACEF</title>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --unifacef-blue: #003366;
+            --unifacef-gold: #FFD700;
+            --light-gray: #f5f5f5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+        }
+
+        header {
+            background-color: var(--unifacef-blue);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            max-width: 200px;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--unifacef-blue);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            color: var(--unifacef-blue);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--unifacef-blue);
+            box-shadow: 0 0 5px rgba(0,51,102,0.2);
+        }
+
+        button {
+            background-color: var(--unifacef-blue);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #002244;
+        }
+
+        .export-btn {
+            background-color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .export-btn:hover {
+            background-color: #218838;
+        }
+
+        .chamado-card {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            background: white;
+            position: relative;
+        }
+
+        .btn-deletar {
+            background-color: #dc3545;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-deletar:hover {
+            background-color: #c82333;
+        }
+
+        .chamado-card h3 {
+            color: var(--unifacef-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .chamado-card p {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        footer {
+            background-color: var(--unifacef-blue);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="unifacef.png" alt="UNIFACEF Logo" class="logo">
+        <h1>Sistema de Chamados</h1>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <button onclick="exportarChamados()" class="export-btn">Exportar para Excel</button>
+            
+            <h2>Novo Chamado</h2>
+            <form id="chamadoForm">
+                <div class="form-group">
+                    <label>Data:</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="form-group">
+                    <label>Horário:</label>
+                    <input type="time" id="horario" required>
+                </div>
+                <div class="form-group">
+                    <label>Estagiário:</label>
+                    <input type="text" id="estagiario" required>
+                </div>
+                <div class="form-group">
+                    <label>Unidade:</label>
+                    <select id="unidade" required>
+                        <option value="">Selecione uma unidade</option>
+                        <option value="1">Unidade 1</option>
+                        <option value="2">Unidade 2</option>
+                        <option value="3">Unidade 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sala:</label>
+                    <select id="sala" required>
+                        <option value="">Selecione uma sala</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Professor:</label>
+                    <input type="text" id="professor" required>
+                </div>
+                <div class="form-group">
+                    <label>Motivo:</label>
+                    <input type="text" id="motivo" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição:</label>
+                    <textarea id="descricao" required rows="4"></textarea>
+                </div>
+                <button type="submit">Criar Chamado</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Lista de Chamados</h2>
+            <div id="listaChamados"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 UNIFACEF - Centro Universitário Municipal de Franca</p>
+    </footer>
+
+    <script>
+        // Objeto com as salas por unidade
+        const salasPorUnidade = {
+            "1": [
+                "04", "Lab 16", "Lab 17", "18", "19", "20", "21", "22", "23", "24", 
+                "25", "26", "Lab 28", "29", "30", "31", "32", "33", 
+                "Lab de Matemática", "Escola Modelo"
+            ],
+            "2": [
+                "08", "09", "102", "103", "104", "105", "Lab 107", "108", "109", 
+                "110", "111", "112", "113", "114", "200", "201", "202", "203", 
+                "204", "205", "206", "Lab 207", "208", "210", "211", "212", "213",
+                "Agência", "Lab de Letras"
+            ],
+            "3": ["01","101", "102", "103", "104","105"]
+        };
+
+        // Função para atualizar as opções de sala
+        function atualizarSalas() {
+            const unidadeSelecionada = document.getElementById('unidade').value;
+            const salaSelect = document.getElementById('sala');
+            const salas = salasPorUnidade[unidadeSelecionada];
+
+            // Limpar opções atuais
+            salaSelect.innerHTML = '<option value="">Selecione uma sala</option>';
+
+            // Adicionar novas opções
+            salas.forEach(sala => {
+                const option = document.createElement('option');
+                option.value = sala;
+                option.textContent = sala;
+                salaSelect.appendChild(option);
+            });
+        }
+
+        // Função para formatar a data do formato YYYY-MM-DD para DD/MM/YYYY
+        function formatarData(data) {
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Função para exportar chamados
+        function exportarChamados() {
+            window.location.href = 'http://localhost:5000/api/exportar';
+        }
+
+        // Função para deletar chamado
+        function deletarChamado(id) {
+            if (confirm('Tem certeza que deseja excluir este chamado?')) {
+                fetch(`http://localhost:5000/api/chamados/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Chamado excluído com sucesso!');
+                        carregarChamados();
+                    } else {
+                        throw new Error('Erro ao excluir chamado');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao excluir chamado. Verifique o console para mais detalhes.');
+                });
+            }
+        }
+
+        // Função para carregar chamados
+        function carregarChamados() {
+            fetch('http://localhost:5000/api/chamados')
+                .then(response => response.json())
+                .then(chamados => {
+                    const lista = document.getElementById('listaChamados');
+                    lista.innerHTML = '';
+                    chamados.forEach(chamado => {
+                        lista.innerHTML += `
+                            <div class="chamado-card">
+                                <button class="btn-deletar" onclick="deletarChamado(${chamado.id})">Excluir</button>
+                                <h3>${chamado.motivo}</h3>
+                                <p><strong>Data:</strong> ${chamado.data}</p>
+                                <p><strong>Horário:</strong> ${chamado.horario}</p>
+                                <p><strong>Unidade:</strong> ${chamado.unidade}</p>
+                                <p><strong>Sala:</strong> ${chamado.sala}</p>
+                                <p><strong>Professor:</strong> ${chamado.professor}</p>
+                                <p><strong>Estagiário:</strong> ${chamado.estagiario}</p>
+                                <p><strong>Descrição:</strong> ${chamado.descricao}</p>
+                            </div>
+                        `;
+                    });
+                })
+                .catch(error => console.error('Erro:', error));
+        }
+
+        // Função para criar chamado
+        document.getElementById('chamadoForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                data: formatarData(document.getElementById('data').value),
+                horario: document.getElementById('horario').value + ':00',
+                estagiario: document.getElementById('estagiario').value,
+                unidade: document.getElementById('unidade').value,
+                sala: document.getElementById('sala').value,
+                professor: document.getElementById('professor').value,
+                motivo: document.getElementById('motivo').value,
+                descricao: document.getElementById('descricao').value
+            };
+
+            fetch('http://localhost:5000/api/chamados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Sucesso:', data);
+                carregarChamados();
+                this.reset();
+                atualizarSalas(); // Resetar a lista de salas
+                alert('Chamado criado com sucesso!');
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao criar chamado. Verifique o console para mais detalhes.');
+            });
+        };
+
+        // Adicionar evento de mudança na seleção de unidade
+        document.getElementById('unidade').addEventListener('change', atualizarSalas);
+
+        // Carregar chamados ao iniciar
+        carregarChamados();
+        // Inicializar lista de salas
+        atualizarSalas();
+    </script>
+</body>
+</html> 
